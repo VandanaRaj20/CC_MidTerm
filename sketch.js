@@ -52,41 +52,38 @@ function draw() {
     timer.display();
 
     if (timer.finished()) {
-      //by default i set, if timer runs out then endGame()will be called
-      endGame();
-    
-    }
-    //if red ball is clicked
-    else if (isRedBallClicked()) {
-      endGame();
+        endGame();
+    } else if (isRedBallClicked()) {
+        endGame();
     } else {
-      if (random(1) < 0.02) {
-        //assign dedicated colors to random number of circles
-        let circleColor = random(['white', 'green', 'yellow', 'black', 'blue', 'red', 'purple']);
-        circles.push(new Circle(circleColor));
-      }
-
-      //while gameState is in 'playing' mode, i check if player clicked either red or yellow.
-      for (let i = circles.length - 1; i >= 0; i--) {
-        circles[i].display();
-        circles[i].move();
-        if (circles[i].y > height) {
-          if (circles[i].color === 'red') {
-            endGame();
-          } else if (circles[i].color === 'yellow') {
-            score += 10;
-            if (score >= 30) {
-              circles[i].speed = random(7,10 );
-            }
-          }
-          circles.splice(i, 1);
+        if (random(1) < 0.02) {
+            let circleColor = random(['white', 'green', 'yellow', 'black', 'blue', 'red', 'purple']);
+            circles.push(new Circle(circleColor));
         }
-      }
 
-      textSize(24);
-      text('Score: ' + score, width / 2, 30);
+        for (let i = circles.length - 1; i >= 0; i--) {
+            circles[i].display();
+            circles[i].move();
+            if (circles[i].y > height) {
+                if (circles[i].color === 'red') {
+                    endGame();
+                } else if (circles[i].color === 'yellow') {
+                    score += 10;
+                    if (score >= 30) {
+                        // Increase the speed of yellow balls after reaching 30 points
+                        increaseYellowBallSpeed();
+                    }
+                }
+                circles.splice(i, 1);
+            }
+        }
+
+        textSize(24);
+        text('Score: ' + score, width / 2, 30);
     }
-  } else if (gameState === 'gameOver') {
+}
+
+   else if (gameState === 'gameOver') {
     displayGameOver();
   }
 }
@@ -100,6 +97,16 @@ function isRedBallClicked() {
   }
   return false;
 }
+
+
+function increaseYellowBallSpeed() {
+  for (let i = 0; i < circles.length; i++) {
+    if (circles[i].color === 'yellow') {
+      circles[i].speed = random(7, 10);
+    }
+  }
+}
+
 
 function startGame() {
   circles = [];
